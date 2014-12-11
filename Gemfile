@@ -6,6 +6,10 @@ gem 'spree_auth_devise', git: 'https://github.com/spree/spree_auth_devise.git', 
 
 gemspec
 
+group :development, :test do
+  gem 'pry'
+end
+
 group :test do
   gem 'shoulda-matchers'
   gem 'rspec-collection_matchers'
