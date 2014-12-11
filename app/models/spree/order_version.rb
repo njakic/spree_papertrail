@@ -9,7 +9,7 @@ class Spree::OrderVersion < ActiveRecord::Base
     status =  {
                 products: order.products.map{|product| product.current_version.id},
                 taxons: order.products.map{|product| {product.id => product.taxons.map{|taxon| taxon.current_version.id}}},
-                variants: [],
+                variants: order.variants.map{|variant| {variant.product_id => variant.current_version.id}},
                 option_types: []
               }
 
@@ -17,7 +17,7 @@ class Spree::OrderVersion < ActiveRecord::Base
   end
 
   def products
-    versions = PaperTrail::Version.find(status[:products])
+    versions = PaperTrail::Version.where(id: status[:products])
     versions.map &:reify
   end
 
@@ -26,11 +26,24 @@ class Spree::OrderVersion < ActiveRecord::Base
 
     status[:taxons].each do |taxon|
       if taxon_ids = taxon[product_id]
-        versions = PaperTrail::Version.find(taxon_ids)
+        versions = PaperTrail::Version.where(id: taxon_ids)
         taxons += versions.map &:reify
       end
     end
 
     taxons
+  end
+
+  def variants(product_id:)
+    variants = []
+
+    status[:variants].each do |variant|
+      if variant_ids = variant[product_id]
+        versions = PaperTrail::Version.where(id: variant_ids)
+        variants += versions.map &:reify
+      end
+    end
+
+    variants
   end
 end
