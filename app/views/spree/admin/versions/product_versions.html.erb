@@ -1,0 +1,38 @@
+<% content_for :page_actions do %>
+  <li><%= button_link_to Spree.t(:back), spree.edit_admin_product_path(@product), :icon => 'icon-arrow-left' %></li>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: Spree.t(:product_versions) } %>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= Spree.t(:event) %></th>
+      <th><%= Spree.t(:old_version) %></th>
+      <th><%= Spree.t(:released_at) %></th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @versions.each do |version| %>
+      <tr>
+        <td><%= version.event %></td>
+        <td>
+          <% if version.reify %>
+            <% version.reify.attributes.each do |key, value| %>
+              <p>
+                <strong><%= key %>: </strong>
+                <span><%= value %></span>
+              </p>
+            <% end %>
+          <% end %>
+        </td>
+        <td><%= pretty_time(version.created_at.localtime) %></td>
+        <td class="actions">
+          <%= link_to_show version, url: admin_product_version_path(@product, version), :no_text => true, :class => 'edit' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
