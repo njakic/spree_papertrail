@@ -5,17 +5,6 @@ class Spree::OrderVersion < ActiveRecord::Base
 
   validates :order, presence: true
 
-  def self.make_version(order:)
-    status =  {
-                products: order.products.map{|product| product.current_version.id},
-                taxons: order.products.map{|product| {product.id => product.taxons.map{|taxon| taxon.current_version.id}}},
-                variants: order.variants.map{|variant| {variant.product_id => variant.current_version.id}},
-                option_types: order.products.map{|product| {product.id => product.option_types.map{|option_type| option_type.current_version.id}}}
-              }
-
-    create status: status, order: order
-  end
-
   def products
     versions = PaperTrail::Version.where(id: status[:products])
     versions.map &:reify
@@ -25,38 +14,90 @@ class Spree::OrderVersion < ActiveRecord::Base
     taxon_ids = []
 
     status[:taxons].each do |taxon|
-      if taxon_ids = taxon[product_id]
-        versions = PaperTrail::Version.where(id: taxon_ids)
-        taxons += versions.map &:reify
-      end
+      taxon_ids += taxon[product_id].to_a
     end
 
-    taxons
+    versions = PaperTrail::Version.where(id: taxon_ids)
+    versions.map(&:reify)
   end
 
   def variants(product_id:)
-    variants = []
+    variant_ids = []
 
     status[:variants].each do |variant|
-      if variant_ids = variant[product_id]
-        versions = PaperTrail::Version.where(id: variant_ids)
-        variants += versions.map &:reify
+      if value = variant[product_id]
+        variant_ids += value.is_a?(Array) ? value : [value]
       end
     end
 
-    variants
+    versions = PaperTrail::Version.where(id: variant_ids)
+    versions.map(&:reify)
   end
 
   def option_types(product_id:)
-    option_types = []
+    option_type_ids = []
 
     status[:option_types].each do |option_type|
-      if option_type_ids = option_type[product_id]
-        versions = PaperTrail::Version.where(id: option_type_ids)
-        option_types += versions.map &:reify
+      if value = option_type[product_id]
+        option_type_ids += value.is_a?(Array) ? value : [value]
       end
     end
 
-    option_types
+    versions = PaperTrail::Version.where(id: option_type_ids)
+    versions.map(&:reify)
   end
+
+  def option_values(variant_id:)
+    option_value_ids = []
+
+    status[:option_values].each do |option_value|
+      if value = option_value[variant_id]
+        option_value_ids += value.is_a?(Array) ? value : [value]
+      end
+    end
+
+    versions = PaperTrail::Version.where(id: option_value_ids)
+    versions.map(&:reify)
+  end
+
+  def self.make_version(order:)
+    status =  {
+                products: product_versions(order: order),
+                taxons: taxon_versions(order: order),
+                variants: variant_versions(order: order),
+                option_types: option_type_versions(order: order),
+                option_values: option_values_versions(order: order)
+              }
+
+    create status: status, order: order
+  end
+
+  private
+    def self.product_versions(order:)
+      order.products.map(&:current_version_id)
+    end
+
+    def self.taxon_versions(order:)
+      order.products.map do |product|
+        { product.id => product.taxons.map(&:current_version_id) }
+      end
+    end
+
+    def self.variant_versions(order:)
+      order.variants.map do |variant|
+        { variant.product_id => variant.current_version.id }
+      end
+    end
+
+    def self.option_type_versions(order:)
+      order.products.map do |product|
+        { product.id => product.option_types.map(&:current_version_id) }
+      end
+    end
+
+    def self.option_values_versions(order:)
+      order.variants.map do |variant|
+        { variant.id => variant.option_values.map(&:current_version_id) }
+      end
+    end
 end

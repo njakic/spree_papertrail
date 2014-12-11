@@ -32,5 +32,10 @@ module PaperTrail
 
       return cv
     end
+
+    # Entrega el :id del la version con los datos actuales
+    def current_version_id
+      current_version.id
+    end
   end
 end

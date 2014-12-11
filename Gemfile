@@ -8,6 +8,9 @@ gemspec
 
 group :development, :test do
   gem 'pry'
+
+  # Pretty print your Ruby objects with style -- in full color and with proper indentation
+  gem 'awesome_print'
 end
 
 group :test do
