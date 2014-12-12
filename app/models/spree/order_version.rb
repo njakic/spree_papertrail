@@ -65,8 +65,7 @@ class Spree::OrderVersion < ActiveRecord::Base
                 products: product_versions(order: order),
                 taxons: taxon_versions(order: order),
                 variants: variant_versions(order: order),
-                option_types: option_type_versions(order: order),
-                option_values: option_values_versions(order: order)
+                option_types_and_values: option_type_and_value_versions(order: order)
               }
 
     create status: status, order: order
@@ -74,30 +73,37 @@ class Spree::OrderVersion < ActiveRecord::Base
 
   private
     def self.product_versions(order:)
-      order.products.map(&:current_version_id)
+      order.products.map do |product|
+        { product_id: product.id, version_id: product.current_version_id }
+      end
     end
 
     def self.taxon_versions(order:)
-      order.products.map do |product|
-        { product.id => product.taxons.map(&:current_version_id) }
-      end
+      order.products.includes(:taxons).map do |product|
+        product.taxons.map do |taxon|
+          { product_id: product.id, version_id: taxon.current_version_id, taxon_id: taxon.id}
+        end
+      end.flatten
     end
 
     def self.variant_versions(order:)
       order.variants.map do |variant|
-        { variant.product_id => variant.current_version.id }
+        { product_id: variant.product_id, version_id: variant.current_version_id, variant_id: variant.id }
       end
     end
 
-    def self.option_type_versions(order:)
-      order.products.map do |product|
-        { product.id => product.option_types.map(&:current_version_id) }
-      end
-    end
-
-    def self.option_values_versions(order:)
-      order.variants.map do |variant|
-        { variant.id => variant.option_values.map(&:current_version_id) }
-      end
+    def self.option_type_and_value_versions(order:)
+      order.variants.includes(option_values: :option_type).map do |variant|
+        variant.option_values.map do |option_value|
+          {
+            product_id: variant.product_id,
+            variant_id: variant.id,
+            option_value_version_id: option_value.current_version_id,
+            option_value_id: option_value.id,
+            option_type_version_id: option_value.option_type.current_version_id,
+            option_type_id: option_value.option_type.id
+          }
+        end
+      end.flatten
     end
 end
