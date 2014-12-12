@@ -12,18 +12,38 @@ module Spree
       end
     end
 
+    def products_version_ids
+      if status[:products]
+        status[:products].collect {|item| item[:version_id] }
+      else
+        []
+      end
+    end
+
     def products
-      version_ids = status[:products].collect {|item| item[:version_id] }
+      version_ids = products_version_ids
 
       versions = PaperTrail::Version.where(id: version_ids)
       versions.map &:reify
     end
 
-    def product(product_id:)
-      version_id = status[:products].collect {|item| item[:version_id] if item[:product_id] == product_id}.compact.first
+    def product_version_id(product_id:)
+      if status[:products]
+        status[:products].collect do |item|
+          item[:version_id] if item[:product_id] == product_id
+        end.compact.first
+      else
+        nil
+      end
+    end
 
-      version = PaperTrail::Version.find_by(id: version_id)
-      version.try(:reify)
+    def product(product_id:)
+      if version_id = product_version_id(product_id: product_id)
+        version = PaperTrail::Version.find_by(id: version_id)
+        version.try(:reify)
+      else
+        return nil
+      end
     end
   end
 end

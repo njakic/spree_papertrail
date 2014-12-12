@@ -1,4 +1,6 @@
-versions = {}
+versions =  {
+              products: [{product_id: 1, version_id: 1}]
+            }
 
 FactoryGirl.define do
   # Define your Spree extensions Factories within this file to enable applications, and other extensions to use and override them.

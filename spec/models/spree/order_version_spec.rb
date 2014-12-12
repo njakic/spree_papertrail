@@ -38,6 +38,7 @@ RSpec.describe Spree::OrderVersion, :type => :model do
   ###########
   # methods #
   ###########
-  # Describe here you model methods behaviour.
-
+  describe ":status" do
+    it { expect(subject.status.class).to eq(Hash) }
+  end
 end
