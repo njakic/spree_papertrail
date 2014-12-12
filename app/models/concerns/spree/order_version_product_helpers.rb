@@ -1,5 +1,17 @@
 module Spree
   module OrderVersionProductHelpers
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+
+    module ClassMethods
+      def product_versions(order:)
+        order.products.map do |product|
+          { product_id: product.id, version_id: product.current_version_id }
+        end
+      end
+    end
+
     def products
       version_ids = status[:products].collect {|item| item[:version_id] }
 
@@ -13,12 +25,5 @@ module Spree
       version = PaperTrail::Version.find_by(id: version_id)
       version.try(:reify)
     end
-
-    private
-      def self.product_versions(order:)
-        order.products.map do |product|
-          { product_id: product.id, version_id: product.current_version_id }
-        end
-      end
   end
 end

@@ -9,13 +9,15 @@ class Spree::OrderVersion < ActiveRecord::Base
   include Spree::OrderVersionVariantHelpers
   include Spree::OrderVersionTaxonHelpers
   include Spree::OrderVersionOptionTypeAndValueHelpers
+  include Spree::OrderVersionProductPropertyHelpers
 
   def self.make_version(order:)
     status =  {
                 products: product_versions(order: order),
                 variants: variant_versions(order: order),
                 taxons: taxon_versions(order: order),
-                option_types_and_values: option_type_and_value_versions(order: order)
+                option_types_and_values: option_type_and_value_versions(order: order),
+                product_properties: product_property_versions(order: order)
               }
 
     create status: status, order: order
