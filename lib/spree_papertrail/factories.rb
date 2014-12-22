@@ -18,7 +18,9 @@ versions =  {
                                     property_id: 1
                                   }],
 
-              taxons: [{product_id: 1, version_id: 1, taxon_id: 1}]
+              taxons: [{product_id: 1, version_id: 1, taxon_id: 1}],
+
+              variants: [{product_id: 1, variant_id: 1, version_id: 1}]
             }
 
 FactoryGirl.define do
