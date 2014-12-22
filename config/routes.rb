@@ -3,7 +3,7 @@ Spree::Core::Engine.routes.draw do
 
   namespace :admin do
     resources :orders do
-      resources :versions, only: [:index, :show]
+      resources :order_versions, only: [:index, :show]
     end
   end
 end

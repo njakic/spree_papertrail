@@ -1,14 +1,9 @@
 versions =  {
               products: [{product_id: 1, version_id: 1}],
 
-              option_types_and_values: [{
-                                          product_id: 1,
-                                          variant_id: 1,
-                                          option_value_version_id: 1,
-                                          option_value_id: 1,
-                                          option_type_version_id: 1,
-                                          option_type_id: 1
-                                        }],
+              variants: [{product_id: 1, variant_id: 1, version_id: 1}],
+
+              taxons: [{product_id: 1, version_id: 1, taxon_id: 1}],
 
               product_properties: [{
                                     product_id: 1,
@@ -18,9 +13,14 @@ versions =  {
                                     property_id: 1
                                   }],
 
-              taxons: [{product_id: 1, version_id: 1, taxon_id: 1}],
-
-              variants: [{product_id: 1, variant_id: 1, version_id: 1}]
+              option_types_and_values: [{
+                                          product_id: 1,
+                                          variant_id: 1,
+                                          option_value_version_id: 1,
+                                          option_value_id: 1,
+                                          option_type_version_id: 1,
+                                          option_type_id: 1
+                                        }]
             }
 
 FactoryGirl.define do

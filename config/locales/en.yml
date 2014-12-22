@@ -3,4 +3,4 @@
 
 en:
   spree:
-    versions: History
+    order_versions: History

@@ -1,0 +1,68 @@
+<% content_for :page_actions do %>
+  <% if can?(:admin, Spree::Order) %>
+    <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, icon: 'arrow-left' %></li>
+  <% end %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: Spree.t(:order_versions) } %>
+
+<% @version.products.each do |product| %>
+  <table>
+    <tr>
+      <td><%= Spree::Product.human_attribute_name(:name) %></td>
+      <td><%= product.name %></td>
+    </tr>
+
+    <tr>
+      <td><%= Spree::Product.human_attribute_name(:description) %></td>
+      <td><%= product.description %></td>
+    </tr>
+
+    <tr>
+      <td><%= Spree::Product.human_attribute_name(:taxons) %></td>
+      <td>
+        <% @version.taxons(product_id: product.id).each do |taxon| %>
+          <p><%= taxon.name %></p>
+        <% end %>
+      </td>
+    </tr>
+
+    <tr>
+      <td><%= Spree::Product.human_attribute_name(:properties) %></td>
+      <td>
+        <table>
+          <colgroup>
+            <col style="width: 40%;" />
+            <col style="width: 60%;" />
+          </colgroup>
+          <% @version.product_property_and_property_version_ids(product_id: product.id).each do |product_property_and_property| %>
+            <tr>
+              <td><%= PaperTrail::Version.find(product_property_and_property[:property_version_id]).reify.name %></td>
+              <td><%= PaperTrail::Version.find(product_property_and_property[:product_property_version_id]).reify.value %></td>
+            </tr>
+          <% end %>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td><%= Spree::Product.human_attribute_name(:variants) %></td>
+      <td>
+        <% @version.variants(product_id: product.id).each_with_index do |variant, index| %>
+          <table>
+            <colgroup>
+              <col style="width: 40%;" />
+              <col style="width: 60%;" />
+            </colgroup>
+            <% @version.option_type_and_value_version_ids(variant_id: variant.id).each do |option_type_and_value| %>
+              <tr>
+                <td><%= PaperTrail::Version.find(option_type_and_value[:option_type_version_id]).reify.presentation %></td>
+                <td><%= PaperTrail::Version.find(option_type_and_value[:option_value_version_id]).reify.presentation %></td>
+              </tr>
+            <% end %>
+          </table>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+<% end %>
