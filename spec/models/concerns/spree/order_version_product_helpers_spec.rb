@@ -49,7 +49,7 @@ RSpec.describe Spree::OrderVersion, :type => :model do
       it { expect(subject.products).to_not be_nil }
     end
 
-    describe ":products_version_id" do
+    describe ":product_version_id" do
       subject { FactoryGirl.build(:order_version) }
 
       it { expect(subject).to respond_to :product_version_id }
@@ -81,6 +81,7 @@ RSpec.describe Spree::OrderVersion, :type => :model do
 
         expect(order_version.product(product_id: product.id).class).to eq(Spree::Product)
         expect(order_version.product(product_id: product.id)).to eq(version.reify)
+        expect(order_version.product(product_id: product.id)).to eq(product)
       end
     end
   end

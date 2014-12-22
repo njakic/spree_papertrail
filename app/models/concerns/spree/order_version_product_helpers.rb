@@ -12,6 +12,7 @@ module Spree
       end
     end
 
+    # Entrega los id de las versiones de todos los productos
     def products_version_ids
       if status[:products]
         status[:products].collect {|item| item[:version_id] }
@@ -20,6 +21,7 @@ module Spree
       end
     end
 
+    # Entrega todos los productos en sus respectivas versiones
     def products
       version_ids = products_version_ids
 
@@ -27,6 +29,7 @@ module Spree
       versions.map &:reify
     end
 
+    # Entrega el id de la version del producto con id dado
     def product_version_id(product_id:)
       if status[:products]
         status[:products].collect do |item|
@@ -37,6 +40,7 @@ module Spree
       end
     end
 
+    # Entrega el producto con id dado en su respectiva version
     def product(product_id:)
       if version_id = product_version_id(product_id: product_id)
         version = PaperTrail::Version.find_by(id: version_id)
