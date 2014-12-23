@@ -1,7 +1,16 @@
 SpreePapertrail
 ===============
 
-Introduction goes here.
+Allows audit of customer orders shown at the time of purchase, keeping with historical changes in:
+
+- Product
+- Taxon (and Classification)
+- Property (and ProductProperties)
+- Variant (and their OptionValues with her OptionType)
+
+Finally have a section in the backend, from where you can see the change history of an order.
+
+Note: Remember that the history in the order is not enabled by default, you must enable this according to your needs.
 
 Installation
 ------------
@@ -18,6 +27,22 @@ Bundle your dependencies and run the installation generator:
 bundle
 bundle exec rails g spree_papertrail:install
 ```
+
+Usage
+-----
+
+To track product changes you need to add the following line to your order_decorator:
+
+```ruby
+after_save :make_version
+```
+
+Or, to track on specific transition:
+
+```ruby
+state_machine.before_transition from: :address, do: :make_version
+```
+
 
 Testing
 -------
@@ -36,4 +61,4 @@ Simply add this require statement to your spec_helper:
 require 'spree_papertrail/factories'
 ```
 
-Copyright (c) 2014 [name of extension creator], released under the New BSD License
+Copyright (c) 2014 [Acid Labs](http://acid.cl), released under the New BSD License
