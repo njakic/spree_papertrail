@@ -42,7 +42,7 @@
 
         <tr data-hook="product_version-properties">
           <td><%= Spree.t(:properties) %></td>
-          <td>
+          <td class='table-inside'>
             <table>
               <colgroup>
                 <col style="width: 40%;" />
@@ -63,7 +63,7 @@
         <% @version.variants(product_id: product.id).each_with_index do |variant, index| %>
           <tr data-hook="product_version-variant">
             <td><%= Spree.t(:variant) %>: <%= variant.sku %></td>
-            <td>
+            <td class="table-inside">
               <table data-hook="product_version-option_type_and_value">
                 <colgroup>
                   <col style="width: 40%;" />
