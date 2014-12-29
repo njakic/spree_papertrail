@@ -15,7 +15,9 @@ module Spree
     # Entrega los id de las versiones de todos los productos
     def products_version_ids
       if status[:products]
-        status[:products].collect {|item| item[:version_id] }
+        status[:products].collect do |item|
+          item[:version_id]
+        end.compact
       else
         []
       end
