@@ -7,16 +7,25 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: Spree.t(:order_versions) } %>
 
 <table>
+  <colgroup>
+    <col style="width: 15%;" />
+    <col style="width: 70%;" />
+    <col style="width: 15%;" />
+  </colgroup>
+
   <thead>
     <tr>
+      <th><%= Spree.t(:revision_index) %></th>
       <th><%= Spree.t(:created_at) %></th>
       <th class="actions"></th>
     </tr>
   </thead>
 
   <tbody>
-    <% @versions.each do |version| %>
+    <% versions_total = @versions.count %>
+    <% @versions.each_with_index do |version, index| %>
       <tr>
+        <td><%= versions_total - index %></td>
         <td><%= l version.created_at %></th>
         <td class="actions"><%= link_to_show version, url: admin_order_order_version_path(@order, version), :no_text => true %></th>
       </tr>

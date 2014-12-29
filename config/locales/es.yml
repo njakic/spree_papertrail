@@ -4,3 +4,4 @@
 es:
   spree:
     order_versions: Historial
+    revision_index: Revision

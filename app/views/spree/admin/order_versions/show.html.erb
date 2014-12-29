@@ -6,9 +6,18 @@
 
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: Spree.t(:order_versions) } %>
 
+<% content_for :page_title do %>
+  (<%= l @version.created_at %>)
+<% end %>
+
 <div data-hook="order_version">
   <% @version.products.each do |product| %>
     <table data-hook="product_version">
+      <colgroup>
+        <col style="width: 20%;" />
+        <col style="width: 80%;" />
+      </colgroup>
+
       <tbody>
         <tr data-hook="product_version-name">
           <td><%= Spree::Product.human_attribute_name(:name) %></td>
@@ -23,9 +32,11 @@
         <tr data-hook="product_version-taxons">
           <td><%= Spree.t(:taxonomies) %></td>
           <td>
-            <% @version.taxons(product_id: product.id).each do |taxon| %>
-              <p><%= taxon.name %></p>
-            <% end %>
+            <ul>
+              <% @version.taxons(product_id: product.id).each do |taxon| %>
+                <li><%= taxon.name %></li>
+              <% end %>
+            </ul>
           </td>
         </tr>
 
@@ -49,11 +60,11 @@
           </td>
         </tr>
 
-        <tr data-hook="product_version-variants">
-          <td><%= Spree.t(:variants) %></td>
-          <td>
-            <% @version.variants(product_id: product.id).each_with_index do |variant, index| %>
-              <table>
+        <% @version.variants(product_id: product.id).each_with_index do |variant, index| %>
+          <tr data-hook="product_version-variant">
+            <td><%= Spree.t(:variant) %>: <%= variant.sku %></td>
+            <td>
+              <table data-hook="product_version-option_type_and_value">
                 <colgroup>
                   <col style="width: 40%;" />
                   <col style="width: 60%;" />
@@ -67,9 +78,9 @@
                   <% end %>
                 </tbody>
               </table>
-            <% end %>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        <% end %>
       </tbody>
     </table>
   <% end %>
