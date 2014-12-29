@@ -10,7 +10,7 @@ RSpec.describe Spree::Order, :type => :model do
   ################
   # associations #
   ################
-  it { expect(subject).to have_many :order_versions }
+  it { expect(subject).to have_many(:order_versions).dependent(:destroy) }
 
 
   ###############
