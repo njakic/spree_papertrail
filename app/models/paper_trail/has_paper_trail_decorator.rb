@@ -7,7 +7,7 @@ module PaperTrail
       # Reviso si hay alguna version actual
       timestamp = respond_to?(:updated_at) ? updated_at : DateTime.now
 
-      cv = send(self.class.versions_association_name).where(":timestamp_field > :last_update", timestamp_field: PaperTrail.timestamp_field, last_update: timestamp).last
+      cv = send(self.class.versions_association_name).where("#{PaperTrail.timestamp_field} > :last_update", last_update: timestamp).last
 
       return cv if cv
 
