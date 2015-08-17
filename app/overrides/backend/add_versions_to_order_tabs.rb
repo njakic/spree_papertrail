@@ -1,4 +1,4 @@
-Deface::Override.new  virtual_path: 'spree/admin/shared/_order_submenu',
+Deface::Override.new  virtual_path: 'spree/admin/shared/_order_tabs',
                       name: 'add_versions_to_order_tabs',
                       original: '7b867e69b2e5644950f335b56b80e85740acfcf2',
                       insert_bottom: "[data-hook='admin_order_tabs']",
